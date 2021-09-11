@@ -1,10 +1,26 @@
-import "../styles.css";
+import React from "react";
+import SearchBar from "./SearchBar";
+import youtube from "../api/youtube";
 
-export default function App() {
-  return (
-    <div className="App">
-      <h1>Hello CodeSandbox</h1>
-      <h2>Start editing to see some magic happen!</h2>
-    </div>
-  );
+export default class App extends React.Component {
+  state = { videos: [] };
+
+  onTermSubmit = async (term) => {
+    const response = await youtube.get("/search", {
+      params: {
+        q: term
+      }
+    });
+
+    this.setState({ videos: response.data.items });
+  };
+
+  render() {
+    return (
+      <div className="App ui container">
+        <SearchBar onTermSubmit={this.onTermSubmit} />
+        {this.state.videos.length} videos found!
+      </div>
+    );
+  }
 }
